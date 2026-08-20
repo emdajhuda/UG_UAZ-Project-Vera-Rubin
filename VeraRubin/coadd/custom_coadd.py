@@ -72,6 +72,7 @@ def custom_coadd_filter(loc_data: tuple,
                         out: bool = True,
                         my_collection_name: str = 'custom_coadd',
                         BUTLER_SAVE_PATH: str = 'local_repo',
+                        make_coadd = True,
                         ):
     """
     Run filtering and coaddition over multiple photometric bands.
@@ -124,20 +125,24 @@ def custom_coadd_filter(loc_data: tuple,
     visits_selected_comb = combine_visits_selected(visits_selected_list)
 
     # Run coadd if requested
-    coadd_results = custom_coadd_multiband(
-        BUTLER_PATH,
-        BUTLER_SAVE_PATH, 
-        loc_data=loc_data,
-        visits_selected=visits_selected_comb,
-        bands=bands,
-        skymap_name=skymap_name,
-        remote_collection=collections,
-        my_collection_name=my_collection_name,
-        sky_coordinates=sky_coordinates,
-        SAVE_FITS=False,
-        out=out)
+    if make_coadd:
+        coadd_results = custom_coadd_multiband(
+            BUTLER_PATH,
+            BUTLER_SAVE_PATH, 
+            loc_data=loc_data,
+            visits_selected=visits_selected_comb,
+            bands=bands,
+            skymap_name=skymap_name,
+            remote_collection=collections,
+            my_collection_name=my_collection_name,
+            sky_coordinates=sky_coordinates,
+            SAVE_FITS=False,
+            out=out)
+    
+        return visits_selected_list, df_metrics_list, coadd_results
 
-    return visits_selected_list, df_metrics_list, coadd_results
+    else:
+        return visits_selected_list, df_metrics_list
 
 def custom_coadd_multiband(BUTLER_PATH: str,
                            BUTLER_SAVE_PATH: str,
